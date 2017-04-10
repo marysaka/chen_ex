@@ -25,12 +25,12 @@ defmodule ChenEx.WebFinger do
     @users %{"thog" => %{"id" => 1, "username" => "thog"}}
 
     def search_user(query) do
-      @users[query |> String.split("@#{Application.get_env(:ostatus, :domain)}") |> Enum.at(0)]
+      @users[query |> String.split("@#{Application.get_env(:chen_ex, :domain)}") |> Enum.at(0)]
     end
 
 
     def generate_host_meta do
-      base_url = Application.get_env(:ostatus, :base_url)
+      base_url = Application.get_env(:chen_ex, :base_url)
       [
         :_doc_type | [element("XRD", %{xmlns: "http://docs.oasis-open.org/ns/xri/xrd-1.0"},
           [
@@ -40,9 +40,9 @@ defmodule ChenEx.WebFinger do
     end
 
     def user_to_webfinger(user) do
-      base_url = Application.get_env(:ostatus, :base_url)
+      base_url = Application.get_env(:chen_ex, :base_url)
       %{
-        "subject" => "acct:" <> user["username"] <> "@" <> Application.get_env(:ostatus, :domain),
+        "subject" => "acct:" <> user["username"] <> "@" <> Application.get_env(:chen_ex, :domain),
         "aliases" => ["#{base_url}/user/#{Map.get(user, "id")}", "#{base_url}/@#{Map.get(user, "username")}"],
         "links" => [%{"rel" => "http://schemas.google.com/g/2010#updates-from", "href" => "#{base_url}/users/#{Map.get(user, "username")}.atom"}, %{"rel" => "salmon", "href" => "#{base_url}/api/salmon/#{Map.get(user, "id")}"}]
       }
