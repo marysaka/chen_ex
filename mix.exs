@@ -11,7 +11,7 @@ defmodule Ostatus.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :ewebmachine, :cowboy, :sweet_xml, :xml_builder, :poison],
+    [applications: [:logger, :ewebmachine, :cowboy, :sweet_xml, :xml_builder, :poison, :riak],
      mod: {ChenEx.App, []} ]
   end
 
@@ -21,7 +21,8 @@ defmodule Ostatus.Mixfile do
       {:ewebmachine, "~> 2.1"},
       {:cowboy, "~> 1.1"},
       {:sweet_xml, "~> 0.6.5"},
-      {:xml_builder, "~> 0.0.9"}
+      {:xml_builder, "~> 0.0.9"},
+      {:riak, "~> 1.1"}
     ]
   end
 end

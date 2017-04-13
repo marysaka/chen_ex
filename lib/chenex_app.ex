@@ -21,10 +21,9 @@ defmodule ChenEx.API.Exceptions do
           kind, reason ->
             stack = System.stacktrace
             reason = Exception.normalize(kind, reason, stack)
-            status = case kind do x when x in [:error,:throw]-> Plug.Exception.status(reason); _-> 500 end
+          status = case kind do x when x in [:error,:throw]-> Plug.Exception.status(reason); _-> 500 end
             conn |> Plug.Conn.put_resp_content_type("application/json")
-                 |> Plug.Conn.send_resp(status,Poison.encode!(%{state: "exception",
-                     reason: Exception.message(reason), trace: Exception.format(kind,reason,stack)}))
+            |> Plug.Conn.send_resp(status,Poison.encode!(%{state: "exception", reason: Exception.message(reason), trace: Exception.format(kind,reason,stack)}))
             :erlang.raise kind,reason,stack
         end
       end
@@ -35,6 +34,8 @@ end
 defmodule ChenEx.API.Common do
   use Ewebmachine.Builder.Handlers
   plug :add_handlers
+  content_types_provided do: ["application/json": :to_json]
+  defh to_json, do: Poison.encode!(state[:json_obj])
 end
 
 defmodule ChenEx.ErrorRoutes do
@@ -60,5 +61,6 @@ defmodule ChenEx.HTTP do
   plug :dispatch
 
   match "/.well-known/*_", do: ChenEx.WebFinger.API.call(conn, ChenEx.WebFinger.API.init(%{}))
+  match "/api/v1/*_", do: ChenEx.API.HTTP.call(conn, ChenEx.API.HTTP.init(%{}))
   match _, do: conn |> send_resp(404, "Not Found")
 end
